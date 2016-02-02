@@ -1,0 +1,16 @@
+---
+- hosts: all
+  vars_files:
+    - ../../vars/main.yml
+    - ../../defaults/main.yml
+  vars:
+    site_type: node
+    domain: node-test.dev
+  roles:
+    - bbatsche.Nginx
+  pre_tasks:
+    - name: Install Git
+      apt: package=git state=present
+      become: yes
+  tasks:
+    - include: ../../tasks/main.yml
