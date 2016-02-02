@@ -1,6 +1,8 @@
 Ansible Node.js Site Role
 =========================
 
+[![Build Status](https://travis-ci.org/bbatsche/Ansible-Node-Site-Role.svg?branch=master)](https://travis-ci.org/bbatsche/Ansible-Node-Site-Role)
+
 This role will install NVM and use that to setup a given version of Node.js. It will create an Nginx site running that node executable through Phusion Passenger.
 
 Requirements
