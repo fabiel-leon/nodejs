@@ -33,7 +33,7 @@ Example Playbook
 ```yml
 - hosts: servers
   roles:
-     - { role: bbatsche.Python, domain: my-node-site.dev }
+     - { role: bbatsche.Node, domain: my-node-site.dev }
 ```
 
 License
