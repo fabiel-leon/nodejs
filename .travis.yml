@@ -9,6 +9,7 @@ before_install:
   - sudo apt-get install -qq python-apt python-pycurl
 install:
   - sudo pip install "ansible~=1.9"
+  - sudo ansible-galaxy install bbatsche.Nginx
 script:
   - echo localhost > inventory
 
