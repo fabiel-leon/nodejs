@@ -32,8 +32,6 @@
     creates: "{{ nvm_root }}/versions/node/{{ node_version }}"
 
 - name: Copy app.js Stub
-  template:
-    src: app.js.j2
-    dest: "{{ http_root }}/{{ domain }}/app.js"
+  template: src=app.js.j2 dest={{ http_root }}/{{ domain }}/app.js
   when: copy_appjs
   notify: Restart Passenger App
