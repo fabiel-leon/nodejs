@@ -11,13 +11,13 @@ describe "Nginx config should be valid" do
   include_examples "nginx::config"
 end
 
-describe command(". /etc/profile.d/nvm.sh && nvm run node -e \"console.log('node-installed');\"") do
+describe command("nvm run 5.5.0 -e \"console.log('node-installed');\"") do
   its(:stdout) { should match /node-installed/ }
 
   its(:exit_status) { should eq 0 }
 end
 
-describe command(". /etc/profile.d/nvm.sh && nvm run node --version") do
+describe command("nvm run 5.5.0 --version") do
   its(:stdout) { should match /^v5\.5\.0$/ }
 
   its(:exit_status) { should eq 0 }
