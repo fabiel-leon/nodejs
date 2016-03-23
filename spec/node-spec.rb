@@ -23,8 +23,8 @@ describe command("nvm run 5.5.0 --version") do
   its(:exit_status) { should eq 0 }
 end
 
-describe command('printf "GET / HTTP/1.1\nHost: node-test.dev\n\n" | nc 127.0.0.1 80') do
-  its(:stdout) { should match /^+HTTP\/1\.1 200 OK$/ }
+describe command('curl -i node-test.dev') do
+  its(:stdout) { should match /^HTTP\/1\.1 200 OK$/ }
 
   its(:stdout) { should match /Phusion Passenger is serving Node.js v5\.5\.0 code on node-test\.dev/ }
 end
