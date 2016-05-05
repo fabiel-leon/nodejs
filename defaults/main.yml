@@ -1,4 +1,4 @@
 ---
-nvm_version:  v0.30.2
-node_version: v5.5.0
+nvm_version:  v0.31.0
+node_version: v6.0.0
 copy_appjs:   no
