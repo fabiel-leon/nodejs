@@ -1,23 +1,58 @@
 ---
+- name: Create NVM Root
+  file:
+    path: "{{ nvm_root }}"
+    state: directory
+    owner: root
+    group: web-admin
+    mode: 02775
+  become: yes
+
+- name: Allow Web Admins to Write NVM Root
+  acl:
+    name: "{{ nvm_root }}"
+    etype: group
+    entity: web-admin
+    permissions: rwx
+    state: present
+  become: yes
+
+- name: Allow Web Admins Write to Future Directories
+  acl:
+    name: "{{ nvm_root }}"
+    etype: group
+    entity: web-admin
+    permissions: rwx
+    default: yes
+    state: present
+  become: yes
+
+- name: Set ACL Mask for Future Directories
+  acl:
+    name: "{{ nvm_root }}"
+    etype: mask
+    permissions: rwx
+    default: yes
+    state: present
+  become: yes
+
 - name: Install NVM
   git:
     repo: https://github.com/creationix/nvm.git
     dest: "{{ nvm_root }}"
     version: "{{ nvm_version }}"
-  become: yes
 
 - name: Add NVM to Profile
   template: src=nvm.sh.j2 dest=/etc/profile.d/nvm.sh mode=755
   become: yes
 
 - name: Create NVM Directories
-  file: path={{ nvm_root }}/{{ item }} state=directory owner={{ ansible_ssh_user }} mode=0775
+  file: path={{ nvm_root }}/{{ item }} state=directory
   with_items:
     - alias
     - bin
     - src
     - versions
-  become: yes
 
 - name: Add NVM Bash Completion
   lineinfile:
