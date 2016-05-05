@@ -4,12 +4,13 @@
   become: yes
 
   vars:
-    site_type: node
     domain: test.dev
   vars_files:
     - defaults/main.yml
     - vars/main.yml
   roles:
-    - bbatsche.Nginx
+    - role: bbatsche.Base
+    - role: bbatsche.Nginx
+      site_type: node
   tasks:
     - include: tasks/main.yml
