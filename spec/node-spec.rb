@@ -13,20 +13,46 @@ describe "Nginx" do
   include_examples "nginx"
 end
 
-describe command("nvm run 9.4.0 -e \"console.log('node-installed');\"") do
-  its(:stdout) { should match /node-installed/ }
-
-  its(:exit_status) { should eq 0 }
+describe "NVM" do
+  let(:subject) { command("nvm --version") }
+  
+  it "is installed" do
+    expect(subject.stdout).to match /^\d+\.\d+\.\d+$/
+  end
+  
+  include_examples "no errors"
 end
 
-describe command("nvm run 9.4.0 --version") do
-  its(:stdout) { should match /^v9\.4\.0$/ }
+context "CLI" do
+  describe "Node runtime" do
+    let(:subject) { command(%Q{nvm run 9.4.0 -e "console.log('node is installed');"}) }
+    
+    it "executes JavaScript" do
+      expect(subject.stdout).to match /^node is installed$/
+    end
+    
+    include_examples "no errors"
+  end
 
-  its(:exit_status) { should eq 0 }
+  describe "Node version" do
+    let(:subject) { command("nvm run 9.4.0 --version") }
+    
+    it "is the requested version" do
+      expect(subject.stdout).to match /^#{Regexp.quote("v9.4.0")}$/
+    end
+    
+    include_examples "no errors"
+  end
 end
 
-describe command('curl -i node-test.dev') do
-  its(:stdout) { should match /^HTTP\/1\.1 200 OK$/ }
+describe "Web requests" do
+  let(:subject) { command("curl -i node-test.dev") }
+  
+  include_examples("curl request", "200")
 
-  its(:stdout) { should match /Phusion Passenger is serving Node.js v9\.4\.0 code on node-test\.dev/ }
+  include_examples "curl request html"
+  
+  it "processed Node.js code" do
+    expect(subject.stdout).to match /Phusion Passenger is serving Node.js v9\.4\.0 code on node-test\.dev/
+  end
 end
