@@ -3,12 +3,14 @@
 
   vars:
     domain: test.dev
+    
   vars_files:
     - defaults/main.yml
     - vars/main.yml
+    
   roles:
     - role: bbatsche.Base
     - role: bbatsche.Nginx
-      site_type: node
+    
   tasks:
     - include: tasks/main.yml
