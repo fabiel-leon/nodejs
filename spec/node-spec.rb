@@ -20,7 +20,10 @@ describe "NVM" do
     expect(subject.stdout).to match /^\d+\.\d+\.\d+$/
   end
   
-  include_examples "no errors"
+  # Can't use "no errors"; docker thinks this should be interactive/login shell
+  it "has no errors" do
+    expect(subject.exit_status).to eq 0
+  end
 end
 
 context "CLI" do
@@ -31,7 +34,9 @@ context "CLI" do
       expect(subject.stdout).to match /^node is installed$/
     end
     
-    include_examples "no errors"
+    it "has no errors" do
+      expect(subject.exit_status).to eq 0
+    end
   end
 
   describe "Node version" do
@@ -41,7 +46,9 @@ context "CLI" do
       expect(subject.stdout).to match /^#{Regexp.quote("v9.4.0")}$/
     end
     
-    include_examples "no errors"
+    it "has no errors" do
+      expect(subject.exit_status).to eq 0
+    end
   end
 end
 
