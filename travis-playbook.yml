@@ -9,7 +9,6 @@
     - vars/main.yml
     
   roles:
-    - role: bbatsche.Base
     - role: bbatsche.Nginx
     
   tasks:
