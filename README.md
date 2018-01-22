@@ -16,8 +16,8 @@ Role Variables
 --------------
 
 - `domain` &mdash; Site domain to be created.
-- `nvm_version` &mdash; Version of NVM to be installed. Default is "v0.30.2".
-- `node_version` &mdash; Version of Node.js to be installed. Default is "v5.5.0".
+- `nvm_version` &mdash; Version of NVM to be installed. Default is "v0.33.8".
+- `node_version` &mdash; Version of Node.js to be installed. Default is "v8.9.4".
 - `copy_appjs` &mdash; Whether to copy a stub app.js file to the site, useful for testing. Default is no.
 - `http_root` &mdash; Directory all site directories will be created under. Default is "/srv/http".
 - `nvm_root` &mdash; Directory to install NVM and its support files. Default is "/usr/local/nvm"

@@ -12,7 +12,8 @@ cache:
     - $HOME/.cache/pip
 
 env:
-  - ANSIBLE_VERSION="2.1"
+  # Lineinfile unsafe_writes not supported in Ansible v2.1
+  # - ANSIBLE_VERSION="2.1"
   - ANSIBLE_VERSION="2.2"
   - ANSIBLE_VERSION="2.3"
   - ANSIBLE_VERSION="2.4"
