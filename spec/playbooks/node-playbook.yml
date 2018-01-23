@@ -2,15 +2,16 @@
 - hosts: all
 
   vars_files:
-    - ../../vars/main.yml
     - ../../defaults/main.yml
-    
+    - ../../vars/main.yml
+
   vars:
     domain: node-test.dev
-    
+
   roles:
-    - bbatsche.Nginx
-      
+    - role: bbatsche.Nginx
+      passenger_app: yes
+
   tasks:
     - include: ../../tasks/main.yml
 
