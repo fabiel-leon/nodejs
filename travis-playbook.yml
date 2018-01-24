@@ -8,10 +8,6 @@
   vars:
     domain: test.dev
 
-  vars_files:
-    - defaults/main.yml
-    - vars/main.yml
-
   roles:
     - role: bbatsche.Nginx
       passenger_app: yes
