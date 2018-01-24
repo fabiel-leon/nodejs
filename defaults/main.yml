@@ -4,5 +4,4 @@ node_version: v8.9.4
 copy_appjs:   no
 
 nginx_configs:
-  - passenger-{{ domain }}.conf
   - node-{{ node_version }}.conf

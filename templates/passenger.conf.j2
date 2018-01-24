@@ -1,9 +1,0 @@
-passenger_enabled on;
-
-{% if env_name == "dev" %}
-passenger_app_env development;
-{% else %}
-passenger_app_env production;
-{% endif %}
-
-passenger_app_root {{ http_root }}/{{ domain }};
