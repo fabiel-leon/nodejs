@@ -66,6 +66,13 @@
   args:
     creates: "{{ nvm_root }}/versions/node/{{ node_version }}"
 
+- name: Copy Nginx Config
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/node-{{ node_version }}.conf
+  become: yes
+  notify:
+    - Restart Passenger App
+    - Restart Nginx
+
 - name: Copy app.js Stub
   template: src=app.js.j2 dest={{ http_root }}/{{ domain }}/app.js
   when: copy_appjs

@@ -1,0 +1,5 @@
+passenger_app_type node;
+
+# Explicitly set node startup file. Passenger seems to require this.
+passenger_startup_file app.js;
+passenger_nodejs {{ nvm_root }}/versions/node/{{ node_version }}/bin/node;

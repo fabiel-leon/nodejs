@@ -1,16 +1,26 @@
 ---
 - hosts: all
+
   vars_files:
-    - ../../vars/main.yml
     - ../../defaults/main.yml
+    - ../../vars/main.yml
+
   vars:
-    site_type: node
     domain: node-test.dev
+
   roles:
-    - bbatsche.Nginx
-  pre_tasks:
-    - name: Install Git
-      apt: package=git state=present
-      become: yes
+    - role: bbatsche.Nginx
+      passenger_app: yes
+
   tasks:
     - include: ../../tasks/main.yml
+
+  post_tasks:
+    - name: Force Nginx Restart
+      command: service nginx restart warn=no
+      become: yes
+      when: ansible_connection | default('smart') == 'docker'
+
+    - name: Force Passenger App Restart
+      command: passenger-config restart-app {{ http_root }}/{{ domain }} --ignore-app-not-running
+      when: ansible_connection | default('smart') == 'docker'

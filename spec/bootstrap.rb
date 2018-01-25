@@ -1,17 +1,20 @@
 require "serverspec"
-require_relative "lib/ansible_helper"
+require_relative "environments"
 
-if ENV.has_key?("CONTINUOUS_INTEGRATION") && ENV["CONTINUOUS_INTEGRATION"] == "true"
-  set :backend, :exec
+Dir[File.join(File.dirname(__FILE__), "shared", "*.rb")].each { |file| require_relative file }
+
+if ENV["CONTINUOUS_INTEGRATION"] == "true"
+  set :backend, :docker
+
+  set :docker_container, AnsibleHelper[ENV["TARGET_HOST"]].id
+
+  # Trigger OS info refresh
+  Specinfra.backend.os_info
 else
-  options = AnsibleHelper.instance.sshOptions
-
   set :backend, :ssh
 
-  set :host,        options[:host_name]
-  set :ssh_options, options
+  set :ssh_options, AnsibleHelper[ENV["TARGET_HOST"]].sshConfig
 end
-
 
 # Disable sudo
 set :disable_sudo, false
@@ -22,14 +25,6 @@ set :disable_sudo, false
 set :login_shell, true
 
 # Set PATH
-set :path, '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:$PATH'
+set :path, "/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:$PATH"
 
-shared_examples "nginx::config" do
-  describe command("nginx -t") do
-    # stderr?? Wtf nginx.
-    its(:stderr) { should match /configuration file \/etc\/nginx\/nginx\.conf syntax is ok/ }
-    its(:stderr) { should match /configuration file \/etc\/nginx\/nginx\.conf test is successful/ }
-
-    its(:exit_status) { should eq 0 }
-  end
-end
+set :shell, "/bin/bash"
