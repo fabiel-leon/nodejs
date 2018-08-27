@@ -1,79 +1,119 @@
 ---
-- name: Create NVM Root
-  file:
-    path: "{{ nvm_root }}"
-    state: directory
-    owner: root
-    group: web-admin
-    mode: 02775
+# - name: Create NVM Root
+#   file:
+#     path: "{{ nvm_root }}"
+#     state: directory
+#     owner: root
+#     group: web-admin
+#     mode: 02775
+#   become: yes
+
+# - name: Allow Web Admins to Write NVM Root
+#   acl:
+#     name: "{{ nvm_root }}"
+#     etype: group
+#     entity: web-admin
+#     permissions: rwx
+#     state: present
+#   become: yes
+
+# - name: Allow Web Admins Write to Future Directories
+#   acl:
+#     name: "{{ nvm_root }}"
+#     etype: group
+#     entity: web-admin
+#     permissions: rwx
+#     default: yes
+#     state: present
+#   become: yes
+
+# - name: Set ACL Mask for Future Directories
+#   acl:
+#     name: "{{ nvm_root }}"
+#     etype: mask
+#     permissions: rwx
+#     default: yes
+#     state: present
+#   become: yes
+
+- name: General | Instalación de las dependencias de los addon de nodejs
+  apt:  
+   name: "{{ item }}" 
+   state: latest
   become: yes
+  with_items: 
+    # - git
+    - gyp
+    - gcc 
+    - g++
+    - make
+    - build-essential
+    - curl
+  # notify: install-nodejs-repo
 
-- name: Allow Web Admins to Write NVM Root
-  acl:
-    name: "{{ nvm_root }}"
-    etype: group
-    entity: web-admin
-    permissions: rwx
-    state: present
+- name: install-nodejs-repos
+  raw: curl -sL https://deb.nodesource.com/setup_8.x | bash - 
+
+- name: install node
+  apt: 
+    name: "{{item}}"
+    state: latest
+    update_cache: yes
   become: yes
-
-- name: Allow Web Admins Write to Future Directories
-  acl:
-    name: "{{ nvm_root }}"
-    etype: group
-    entity: web-admin
-    permissions: rwx
-    default: yes
-    state: present
-  become: yes
-
-- name: Set ACL Mask for Future Directories
-  acl:
-    name: "{{ nvm_root }}"
-    etype: mask
-    permissions: rwx
-    default: yes
-    state: present
-  become: yes
-
-- name: Install NVM
-  git:
-    repo: https://github.com/creationix/nvm.git
-    dest: "{{ nvm_root }}"
-    version: "{{ nvm_version }}"
-
-- name: Add NVM to Profile
-  template: src=nvm.sh.j2 dest=/etc/profile.d/nvm.sh mode=755
-  become: yes
-
-- name: Create NVM Directories
-  file: path={{ nvm_root }}/{{ item }} state=directory
   with_items:
-    - alias
-    - bin
-    - src
-    - versions
+   - nodejs
+   - node-bindings
 
-- name: Add NVM Bash Completion
-  lineinfile:
-    dest: ~/.bashrc
-    line: '[[ -r $NVM_DIR/bash_completion ]] && . $NVM_DIR/bash_completion'
-    insertafter: EOF
-    state: present
+# - name: Install NVM
+#   git:
+#     repo: https://github.com/creationix/nvm.git
+#     dest: "{{ nvm_root }}"
+#     version: "{{ nvm_version }}"
 
-- name: Install Current Version
-  shell: . /etc/profile.d/nvm.sh && nvm install {{ node_version }}
-  args:
-    creates: "{{ nvm_root }}/versions/node/{{ node_version }}"
+# - name: Add NVM to Profile
+#   template: src=nvm.sh.j2 dest=/etc/profile.d/nvm.sh mode=755
+#   become: yes
 
-- name: Copy Nginx Config
-  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/node-{{ node_version }}.conf
-  become: yes
-  notify:
-    - Restart Passenger App
-    - Restart Nginx
+# - name: Create NVM Directories
+#   file: path={{ nvm_root }}/{{ item }} state=directory
+#   with_items:
+#     - alias
+#     - bin
+#     - src
+#     - versions
 
-- name: Copy app.js Stub
-  template: src=app.js.j2 dest={{ http_root }}/{{ domain }}/app.js
-  when: copy_appjs
-  notify: Restart Passenger App
+# - name: Add NVM Bash Completion
+#   lineinfile:
+#     dest: ~/.bashrc
+#     line: '[[ -r $NVM_DIR/bash_completion ]] && . $NVM_DIR/bash_completion'
+#     insertafter: EOF
+#     state: present
+
+# - name: Install Current Version
+#   shell: . /etc/profile.d/nvm.sh && nvm install {{ node_version }}
+#   args:
+#     creates: "{{ nvm_root }}/versions/node/{{ node_version }}"
+
+- name: Install forever node.js package globally.
+  npm:
+    name: "{{ item }}"
+    global: yes
+    # executable: "{{ nvm_root }}/versions/node/{{ node_version }}/bin/npm"
+  with_items:
+    - forever
+    - node-gyp 
+    # - strong-pm
+  environment:
+    PATH: "{{ nvm_root }}/versions/node/{{ node_version }}/bin:{{ ansible_env.PATH }}"
+
+# - name: Copy Nginx Config
+#   template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/node-{{ node_version }}.conf
+#   become: yes
+#   notify:
+#     - Restart Passenger App
+#     - Restart Nginx
+
+# - name: Copy app.js Stub
+#   template: src=app.js.j2 dest={{ http_root }}/{{ domain }}/app.js
+#   when: copy_appjs
+#   notify: Restart Passenger App

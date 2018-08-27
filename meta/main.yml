@@ -16,4 +16,4 @@ galaxy_info:
     - node
     - nvm
 dependencies:
-  - { role: bbatsche.Nginx, passenger_app: yes }
+  # - { role: nginx, passenger_app: no }
